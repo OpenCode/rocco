@@ -10,6 +10,7 @@ from git import Repo
 
 ADDONS_PATH = sys.argv[1]
 GITHUB_TOKEN = sys.argv[2]
+URL_TOKENIZED = f'https://{GITHUB_TOKEN}@github.com\\'
 
 if __name__ == '__main__':
     os.chdir(ADDONS_PATH)
@@ -17,7 +18,7 @@ if __name__ == '__main__':
     for submodule in repo.iter_submodules():
         if submodule.url.startswith("git@"):
             key = f'submodule "{submodule.name}"'
-            value = f'https://{GITHUB_TOKEN}@github.com/{submodule.name}.git'
+            value = submodule.url.replace('git@github.com:', URL_TOKENIZED)
             repo.config_writer().set_value(key, 'url', value).release()
     # This must be necessarily done via subprocess because GitPython will use
     # the URL found in .gitmodules
